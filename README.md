@@ -1,6 +1,51 @@
-# Bare on Android
+# Agregore Hyper Daemon - Android
 
-Example of embedding Bare in an Android application using <https://github.com/holepunchto/bare-kit>.
+Library for starting a [bare-kit](https://github.com/holepunchto/bare-kit) based daemon on Android.
+
+## Using
+
+Build the AAR and place it in your Android project in a new folder called `hyperdaemon`.
+
+Add a `build.gradle` with the following content:
+
+```groovy
+configurations.maybeCreate("default")
+artifacts.add("default", file('hyperdaemon.aar'))
+```
+
+In your `settings.gradle.kts` add this before `include(:app)`.
+
+```kotlin
+include(":hyperdaemon")
+```
+
+In your `app/build.gradle.kts` add the following line to include the library in the `dependencies` section:
+
+```kotlin
+dependencies {
+    api(project(":hyperdaemon"))
+}
+```
+
+Then in your `MainActivity` you can import the library and start the daemon. Make sure to pass in a proper folder for storage and pass in an InputStream for the `app.bundle` asset.
+
+```kotlin
+import moe.mauve.agregore.mobile.lite.HyperDaemon
+
+class MainActivity : ComponentActivity() {
+    private var daemon: HyperDaemon? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        daemon = HyperDaemon()
+        daemon!!.start(
+            applicationContext.filesDir.toString() + "/hyper",
+            assets.open("app.bundle")
+        )
+    }
+}
+```
+
 
 ## Building
 
